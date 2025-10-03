@@ -600,7 +600,7 @@ body.modal-active .graph-modal-content {
 
 .graph-modal-header {
     display: flex;
-    justify-content: flex-end; /* Align close button to the right */
+    justify-content: center; /* Center the close button */
     align-items: center;
     padding: 15px 20px;
     border-bottom: 1px solid #333; /* Dark theme border */
@@ -785,6 +785,8 @@ body.modal-active .graph-modal-content {
     justify-content: center;
     align-items: center;
     background: var(--bg-color);
+    border-left: none; /* Remove left border in fullscreen */
+    border-right: none; /* Remove right border in fullscreen */
 }
 
 .fullscreen-mode .stopwatch {
@@ -798,19 +800,9 @@ body.modal-active .graph-modal-content {
     opacity: 0.8;
 }
 
-/* Fullscreen visualization takes full horizontal space */
+/* Hide visualization in fullscreen mode for focus */
 .fullscreen-mode .visualization-container {
-    width: 100%;
-    max-width: 100%;
-    margin: 20px 0;
-    border-radius: 0;
-    border: none;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-}
-
-.fullscreen-mode .lap-visualization {
-    height: 400px; /* Larger height in fullscreen */
+    display: none; /* Hide visualization in fullscreen for focus mode */
 }
 
 .fullscreen-mode .stopwatch {
@@ -871,31 +863,6 @@ body.modal-active .graph-modal-content {
 @keyframes scaleIn {
     from { transform: scale(0.8); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
-}
-
-.exit-fullscreen-btn {
-    display: none;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 10px 15px;
-    font-size: 14px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    opacity: 0.7;
-    transition: opacity 0.3s;
-    z-index: 100;
-}
-
-.exit-fullscreen-btn:hover {
-    opacity: 1;
-}
-
-.fullscreen-mode .exit-fullscreen-btn {
-    display: block;
 }
 
 /* Responsive design */
@@ -984,23 +951,23 @@ body.modal-active .graph-modal-content {
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
-    padding: 8px 12px;
+    padding: 10px 24px;
     opacity: 1;
-    transition: none !important;
-    /* Fixed position to prevent layout shifts */
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    transition: all 0.2s ease;
+    /* Remove absolute positioning for proper alignment */
+    position: relative;
     width: auto;
     height: auto;
     z-index: 1002;
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
-    border-radius: 4px;
+    border-radius: 6px;
     pointer-events: auto !important;
 }
 
 #closeGraphBtn:hover {
     background-color: rgba(93, 127, 255, 0.8); /* Blue highlight */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('themeToggle');
     const soundToggle = document.getElementById('soundToggle');
     const fullscreenBtn = document.getElementById('fullscreenBtn');
-    const exitFullscreenBtn = document.getElementById('exitFullscreenBtn');
     const lapList = document.getElementById('lapList');
     const lapSearch = document.getElementById('lapSearch');
     const clearLapsBtn = document.getElementById('clearLapsBtn');
@@ -85,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', toggleTheme);
     soundToggle.addEventListener('change', toggleSound);
     fullscreenBtn.addEventListener('click', toggleFullscreen);
-    exitFullscreenBtn.addEventListener('click', exitFullscreen);
     lapSearch.addEventListener('input', filterLaps);
     clearLapsBtn.addEventListener('click', clearLaps);
     
@@ -125,6 +123,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (e.key.toLowerCase() === 'e') {
             // Export graph
             exportGraph();
+        } else if (e.key.toLowerCase() === 'f') {
+            // Toggle fullscreen
+            toggleFullscreen();
         } else if (e.key === 'Escape') {
             // Handle escape key for both fullscreen mode and graph modal
             if (graphModal.style.display === 'flex') {
