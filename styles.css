@@ -1,0 +1,1006 @@
+:root {
+    /* Base colors */
+    --primary-color: #4a6cf7; /* Main highlight color (blue) */
+    --primary-rgb: 74, 108, 247; /* RGB values of primary color for opacity effects */
+    --text-color: #333;
+    --bg-color: #f5f5f7;
+    --card-bg: #ffffff;
+    --border-color: #e1e1e1;
+    
+    /* Lap colors */
+    --fastest-lap: #2ecc71;
+    --slowest-lap: #e74c3c;
+    
+    /* Shadows and effects */
+    --shadow: 0 4px 12px rgba(0,0,0,0.08);
+    --glow: 0 0 20px rgba(74, 108, 247, 0.3);
+}
+
+/* Dark theme colors */
+.dark-theme {
+    --primary-color: #5d7fff;
+    --primary-rgb: 93, 127, 255; /* RGB values of primary color for dark theme */
+    --text-color: #e1e1e1;
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --border-color: #333;
+    --fastest-lap: #1db954;
+    --slowest-lap: #e55039;
+    --shadow: 0 4px 12px rgba(0,0,0,0.3);
+    --glow: 0 0 20px rgba(93, 127, 255, 0.5);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    height: 100vh; /* Set explicit height */
+    transition: background-color 0.3s, color 0.3s; /* Restore normal transitions */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Prevent body from scrolling */
+    /* Keep hardware acceleration for smoother rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* When modal is active, we maintain normal pointer events by default */
+/* Only the modal gets pointer events when animation blocking is active */
+body.modal-active.no-animations {
+    pointer-events: none;
+}
+body.modal-active.no-animations .graph-modal,
+body.modal-active.no-animations .graph-modal-content,
+body.modal-active.no-animations #closeGraphBtn {
+    pointer-events: auto;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) minmax(300px, 2fr) minmax(200px, 1fr);
+    grid-template-rows: auto;
+    padding: 20px;
+    flex: 1;
+    gap: 0px; /* Remove gaps between cards */
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+    overflow: hidden; /* Prevent container from scrolling */
+    align-items: stretch; /* Make all grid items equal height */
+}
+
+/* Left Side: Controls & Features */
+.controls {
+    grid-column: 1 / 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background: var(--card-bg);
+    border-radius: 0; /* Remove border radius for seamless fit */
+    padding: 20px;
+    box-shadow: none; /* Remove shadow for seamless fit */
+    border-right: 1px solid var(--border-color);
+    min-height: 500px; /* Match minimum height with other cards */
+}
+
+.main-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn {
+    padding: 14px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--card-bg);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn.primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.extra-controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.control-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.btn-small {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--card-bg);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    transition: all 0.2s;
+}
+
+.btn-small:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Switch toggle styling */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--border-color);
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(22px);
+}
+
+.slider.round {
+    border-radius: 24px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.theme-toggle, .sound-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theme-toggle-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: var(--card-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.1);
+}
+
+.sun-icon, .moon-icon {
+    position: absolute;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.sun-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.moon-icon {
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* When in dark theme, switch icons */
+.dark-theme .sun-icon {
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+.dark-theme .moon-icon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Help Section Styles */
+.help-section {
+    margin-top: 25px;
+    padding: 15px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.help-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.shortcut-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.shortcut-item:last-child {
+    border-bottom: none;
+}
+
+.shortcut-item kbd {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--primary-color);
+    min-width: 35px;
+    text-align: center;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.shortcut-item span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex: 1;
+    text-align: right;
+    padding-left: 10px;
+}
+
+/* Center: Main Display */
+.main-display {
+    grid-column: 2 / 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--card-bg);
+    border-radius: 0; /* Remove border radius for seamless fit */
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+    box-shadow: none; /* Remove shadow for seamless fit */
+    min-height: 500px; /* Match minimum height with other cards */
+    position: relative;
+    z-index: 10; /* Higher z-index to stand out */
+    transition: all 0.3s ease;
+    padding: 30px 20px;
+}
+
+.main-display:hover {
+    box-shadow: none;
+    transform: none; /* Remove transform for seamless design */
+}
+
+.stopwatch {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 5.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    text-shadow: var(--glow);
+    transition: all 0.3s;
+    padding: 30px;
+    text-align: center;
+    position: relative;
+}
+
+/* Add a pulse animation when stopwatch is running */
+@keyframes subtle-pulse {
+    0% { text-shadow: var(--glow); }
+    50% { text-shadow: 0 0 25px rgba(var(--primary-rgb), 0.45); }
+    100% { text-shadow: var(--glow); }
+}
+
+.running .stopwatch {
+    animation: subtle-pulse 2s infinite ease-in-out;
+}
+
+.stopwatch::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    border-radius: 2px;
+    opacity: 0.6;
+}
+
+/* Lap visualization styles */
+.visualization-container {
+    width: 90%;
+    margin: 25px auto 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background-color-secondary);
+}
+
+.visualization-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.visualization-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.visualization-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.visualization-controls .btn-small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+}
+
+.visualization-controls .icon {
+    font-size: 14px;
+}
+
+.lap-visualization {
+    height: 160px;
+    position: relative;
+    padding: 10px 10px 25px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--background-color-secondary);
+}
+
+.lap-visualization::-webkit-scrollbar {
+    height: 6px;
+}
+
+.lap-visualization::-webkit-scrollbar-track {
+    background: var(--background-color-secondary);
+}
+
+.lap-visualization::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 10px;
+}
+
+.lap-chart-container {
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px;
+    min-width: max-content;
+}
+
+.lap-axis {
+    height: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-start;
+    padding: 0 10px;
+    font-size: 10px;
+    color: var(--text-color-secondary);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none; /* Hide scrollbar for Firefox */
+}
+
+.lap-axis::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for Chrome/Safari/Edge */
+}
+
+.visualization-placeholder {
+    color: var(--border-color);
+    font-size: 14px;
+    font-style: italic;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.lap-bar {
+    position: relative;
+    height: var(--height);
+    width: var(--width, 24px);
+    background-color: var(--color, var(--primary-color));
+    border-radius: 4px 4px 0 0;
+    transition: height 0.3s ease;
+    margin: 0 4px;
+    min-height: 5px;
+}
+
+.lap-bar.fastest {
+    background-color: var(--fastest-lap);
+    box-shadow: 0 0 8px var(--fastest-lap);
+}
+
+.lap-bar.slowest {
+    background-color: var(--slowest-lap);
+    box-shadow: 0 0 8px var(--slowest-lap);
+}
+
+.lap-bar-label {
+    position: absolute;
+    bottom: -20px;
+    font-size: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-color);
+    opacity: 0.7;
+    white-space: nowrap;
+}
+
+.lap-bar-value {
+    position: absolute;
+    top: -18px;
+    font-size: 9px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-color);
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+/* Graph modal styles */
+.graph-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3); /* More transparent to see background timer */
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Start invisible */
+    transition: none !important; /* Disable transitions */
+    will-change: opacity; /* Hardware accelerate opacity */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    touch-action: none; /* Prevent unintended scrolling on touch */
+    transform: translateZ(0);
+    transform-style: preserve-3d;
+    pointer-events: auto; /* Ensure events work */
+}
+
+/* Notification styles */
+.export-notification {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    will-change: transform, opacity;
+    pointer-events: none; /* Don't interfere with clicks */
+}
+
+.graph-modal.active {
+    display: flex !important; /* Force display */
+    opacity: 1;
+}
+
+.graph-modal-content {
+    /* Always use dark theme for graph modal */
+    background-color: rgba(18, 18, 18, 0.95); /* Slightly transparent dark background */
+    color: #e1e1e1; /* Light text color */
+    border-radius: 10px;
+    /* Fixed dimensions to prevent size changes */
+    width: 900px;
+    height: 600px;
+    max-width: 90%; /* Maximum width relative to viewport */
+    max-height: 85vh; /* Maximum height relative to viewport */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Darker shadow for contrast */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: fixed; /* Use fixed positioning instead of relative */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center perfectly */
+    margin: 0; /* Remove margin */
+    will-change: transform; /* Tell browser this element will change */
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform-style: preserve-3d; 
+    isolation: isolate; /* Prevent event bubbling */
+    transition: none !important; /* Disable transitions completely */
+    pointer-events: auto; /* Ensure clicks work */
+    touch-action: none; /* Prevent scrolling/zooming */
+}
+
+/* Completely disable animations when graph is open */
+body.modal-active * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* Fix graph modal in place */
+body.modal-active .graph-modal-content {
+    transform: translateZ(0) !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    margin: 0 !important;
+    transform: translate(-50%, -50%) !important;
+    width: 900px !important; 
+    height: 600px !important;
+}
+
+.graph-modal-header {
+    display: flex;
+    justify-content: flex-end; /* Align close button to the right */
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #333; /* Dark theme border */
+    position: relative; /* Ensure relative positioning for absolute positioned children */
+}
+
+/* Removed .graph-stopwatch styles since we removed that element */
+
+.graph-modal-body {
+    padding: 20px;
+    overflow: hidden; /* Prevent scrolling */
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto; /* Auto width */
+    height: auto; /* Auto height */
+    position: relative; /* Position context */
+}
+
+#lapCanvas {
+    width: 100%; /* Responsive width */
+    max-width: 800px; /* Maximum width */
+    height: auto; /* Auto height */
+    max-height: 60vh; /* Maximum height relative to viewport */
+    display: block; /* Block display to prevent layout shifts */
+    /* Hardware acceleration but less aggressive */
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    image-rendering: auto; /* Default image rendering */
+    pointer-events: auto; /* Allow mouse events */
+    position: relative; /* Position context */
+    z-index: 2; /* Stack above other elements */
+    border: 1px solid #333; /* Add a border for better definition */
+}
+
+/* Right Side: Lap History */
+.lap-history {
+    grid-column: 3 / 4;
+    display: flex;
+    flex-direction: column;
+    background: var(--card-bg);
+    border-radius: 0; /* Remove border radius for seamless fit */
+    padding: 20px;
+    box-shadow: none; /* Remove shadow for seamless fit */
+    border-left: 1px solid var(--border-color);
+    min-height: 500px; /* Match minimum height with other cards */
+    overflow: hidden; /* Hide overflow, but allow children to scroll */
+}
+
+.lap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.lap-header h2 {
+    font-weight: 500;
+    font-size: 20px;
+}
+
+#lapSearch {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg);
+    color: var(--text-color);
+}
+
+.lap-list {
+    flex: 1;
+    overflow-y: auto; /* Enable vertical scrolling */
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+    border-top: 1px solid var(--border-color);
+    padding-top: 15px;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--primary-color) var(--border-color); /* Firefox */
+}
+
+/* Custom scrollbar for Chrome/Safari/Edge */
+.lap-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lap-list::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.lap-list::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 4px;
+}
+
+.lap-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+}
+
+.lap-item:hover {
+    background-color: rgba(0,0,0,0.03);
+}
+
+.lap-item.fastest {
+    color: var(--fastest-lap);
+    font-weight: 500;
+}
+
+.lap-item.slowest {
+    color: var(--slowest-lap);
+    font-weight: 500;
+}
+
+.lap-diff {
+    font-size: 0.85em;
+    margin-left: 8px;
+}
+
+.lap-diff.faster {
+    color: var(--fastest-lap);
+}
+
+.lap-diff.slower {
+    color: var(--slowest-lap);
+}
+
+/* Footer: Stats Section */
+.stats-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    padding: 15px 20px;
+    border-top: 1px solid var(--border-color);
+    box-shadow: none; /* Remove shadow for seamless design */
+    margin-top: auto; /* Push to bottom of flexbox */
+    position: sticky; /* Make sticky at the bottom */
+    bottom: 0;
+    z-index: 50; /* Ensure it stays above other content */
+    width: 100%;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #777;
+}
+
+.stat-value {
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+}
+
+/* Fullscreen mode */
+.fullscreen-mode .controls,
+.fullscreen-mode .lap-history,
+.fullscreen-mode .stats-section {
+    display: none;
+}
+
+.fullscreen-mode .container {
+    height: 100vh;
+}
+
+.fullscreen-mode .main-display {
+    flex: 1;
+    position: relative;
+    border-radius: 0;
+    min-height: 100vh;
+    box-shadow: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-color);
+}
+
+.fullscreen-mode .stopwatch {
+    font-size: 10rem;
+    padding: 40px;
+}
+
+.fullscreen-mode .stopwatch::after {
+    width: 70%;
+    height: 6px;
+    opacity: 0.8;
+}
+
+/* Fullscreen visualization takes full horizontal space */
+.fullscreen-mode .visualization-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 20px 0;
+    border-radius: 0;
+    border: none;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.fullscreen-mode .lap-visualization {
+    height: 400px; /* Larger height in fullscreen */
+}
+
+.fullscreen-mode .stopwatch {
+    margin-bottom: 20px;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: var(--shadow);
+    text-align: center;
+    animation: scaleIn 0.3s;
+}
+
+.modal h3 {
+    margin-bottom: 16px;
+    color: var(--primary-color);
+}
+
+.modal p {
+    margin-bottom: 24px;
+    color: var(--text-color);
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.modal-buttons button {
+    flex: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.exit-fullscreen-btn {
+    display: none;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 10px 15px;
+    font-size: 14px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+    z-index: 100;
+}
+
+.exit-fullscreen-btn:hover {
+    opacity: 1;
+}
+
+.fullscreen-mode .exit-fullscreen-btn {
+    display: block;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .container {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        overflow-y: auto; /* Allow scrolling on smaller screens */
+        height: calc(100vh - 90px); /* Account for stats section */
+    }
+
+    .controls {
+        grid-column: 1;
+        grid-row: 1;
+    }
+    
+    .main-display {
+        grid-column: 1;
+        grid-row: 2;
+        margin: 20px 0;
+    }
+    
+    .lap-history {
+        grid-column: 1;
+        grid-row: 3;
+        max-height: 350px; /* Limit height on smaller screens */
+    }
+    
+    .stopwatch {
+        font-size: 4rem;
+    }
+    
+    .stats-section {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .lap-visualization {
+        height: 120px;
+    }
+    
+    /* Keep the graph modal content fixed size even on mobile */
+    .graph-modal-content {
+        width: 95% !important;
+        height: 80vh !important;
+        max-width: 800px !important;
+        max-height: 600px !important;
+        left: 50% !important;
+        top: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        position: fixed !important;
+    }
+    
+    .graph-stopwatch {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stopwatch {
+        font-size: 3rem;
+    }
+    
+    .controls, .lap-history {
+        padding: 15px;
+    }
+}
+
+/* Graph modal button styling - explicitly for dark mode */
+.graph-modal .btn-small {
+    background-color: #1e1e1e; /* Dark button background */
+    color: #e1e1e1; /* Light text */
+    border: 1px solid #333; /* Dark border */
+}
+
+.graph-modal .btn-small:hover {
+    background-color: #5d7fff; /* Blue on hover */
+    color: white;
+}
+
+/* Close button with fixed positioning to prevent flickering */
+#closeGraphBtn {
+    background-color: rgba(0,0,0,0.2); /* Subtle background */
+    border: 1px solid rgba(255,255,255,0.2); /* Subtle border */
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 12px;
+    opacity: 1;
+    transition: none !important;
+    /* Fixed position to prevent layout shifts */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: auto;
+    height: auto;
+    z-index: 1002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    pointer-events: auto !important;
+}
+
+#closeGraphBtn:hover {
+    background-color: rgba(93, 127, 255, 0.8); /* Blue highlight */
+}
